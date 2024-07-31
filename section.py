@@ -3,8 +3,8 @@
 
     Tested on James Fenimore Cooper's The Spy from 1821 (PG code 9845)
 """
+import argparse
 import os
-import sys
 from common_utils import SectionType, file_name_generator
 
 START_MARKER = 'CHAPTER'
@@ -59,17 +59,26 @@ def section_file(file_path:str, config:Configuration):
     return chapter
 
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        file_path = sys.argv[1]
-        if len(sys.argv) > 2:
-            target_directory = sys.argv[2]
-        else:
-            target_directory = 'text/novel/spy1821'
-    else:
-        file_path = 'rawData/pg9845.txt'
+def configure_arg_parser():
+    parser = argparse.ArgumentParser(description='Section a text file based on chapter and backmatter.')
 
-    config = Configuration(target_directory, START_MARKER, END_MARKER)
+    parser.add_argument('text_file', type=str,
+                        help='The text file to process', default='rawData/pg9845.txt')
+    parser.add_argument('target_directory', type=str,
+                        help='The directory to split the chapters into', default='text/novel/spy1821')
+
+    parser.add_argument('--chapter', type=str, help='The chapter marker string', default=START_MARKER)
+    parser.add_argument('--end', type=str, help='The end-of-ebook string', default=END_MARKER)
+
+    return parser
+
+
+if __name__ == "__main__":
+    args = configure_arg_parser().parse_args()
+
+    os.makedirs(f'{args.target_directory}/chapter', exist_ok=True)
+
+    config = Configuration(args.target_directory, args.chapter, args.end)
     print(f'Writing to {config.get_target_directory()}, using {config.get_start_marker()} and {config.get_end_marker()} as markers.')
-    chapters = section_file(file_path, config)
+    chapters = section_file(args.text_file, config)
     print(f'Total chapters: {chapters}')
