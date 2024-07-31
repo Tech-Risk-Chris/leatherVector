@@ -51,7 +51,7 @@ This step converts and index into a Parquet file, so it can be used for
 querying in a context that supports Presto (e.g. AWS Redshift).
 
 ```bash
-  python3 pack_index.py 
+  python3 pack_index.py pg9845.txt text/novel/spy1821
 ```
 
 # RAG Import
