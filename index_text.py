@@ -94,6 +94,7 @@ if __name__ == "__main__":
     records = 0
     total_sentences = 0
     with gzip.open(index_file, 'wt') as fidx:
+        print(f'Word,Chapter,Sentence', file=fidx)
         chapter_number = 1
         syntax_file = f'{raw_syntax_path}/{chapter_number:03}.json.gz'
         while os.path.exists(syntax_file):
