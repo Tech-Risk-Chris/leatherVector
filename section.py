@@ -5,16 +5,10 @@
 """
 
 import sys
-from enum import Enum
+from common_utils import SectionType, file_name_generator
 
 START_MARKER = 'CHAPTER'
 END_MARKER = '*** END OF THE PROJECT GUTENBERG'
-
-
-class SectionType(Enum):
-    FRONT_MATTER = 'FRONT_MATTER'
-    CHAPTER = 'CHAPTER'
-    BACK_MATTER = 'BACK_MATTER'
 
 
 class Configuration:
@@ -38,21 +32,6 @@ def slurp_lines(file_path):
         lines = file.readlines()
     return lines
 
-
-def file_name_generator(target_directory:str, type:SectionType, counter=None):
-    if counter is None:
-        if type == SectionType.FRONT_MATTER:
-            return f'{target_directory}/chapter/frontm.txt'
-        elif type == SectionType.CHAPTER:
-            raise ValueError('No counter specified for chapter?')
-        else:
-            assert type == SectionType.BACK_MATTER
-            return f'{target_directory}/chapter/backm.txt'
-    else:
-        if type == SectionType.FRONT_MATTER or type == SectionType.BACK_MATTER:
-            raise ValueError('Cannot specify counter for front matter.')
-        else:
-            return f'{target_directory}/chapter/{counter:03}.txt'
 
 
 def section_file(file_path:str, config:Configuration):
