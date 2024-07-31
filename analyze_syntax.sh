@@ -8,6 +8,7 @@
 # Notice that GCloud has a 1M limit on file size. If the chapters are too long,
 # you may have to hand-split them to make the analysis succeed.
 #
+mkdir -pv syntax-raw
 for file in chapter/[0-9]*.txt; do
   syntax_file="syntax-raw/$(basename ${file%.txt}).json"
   echo $(date) 'Writing syntax analysis for' ${file} 'to' ${syntax_file} '...'
