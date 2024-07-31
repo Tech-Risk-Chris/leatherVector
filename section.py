@@ -3,7 +3,7 @@
 
     Tested on James Fenimore Cooper's The Spy from 1821 (PG code 9845)
 """
-
+import os
 import sys
 from common_utils import SectionType, file_name_generator
 
@@ -62,10 +62,14 @@ def section_file(file_path:str, config:Configuration):
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
+        if len(sys.argv) > 2:
+            target_directory = sys.argv[2]
+        else:
+            target_directory = 'text/novel/spy1821'
     else:
         file_path = 'rawData/pg9845.txt'
 
-    config = Configuration('text/novel/spy1821', START_MARKER, END_MARKER)
+    config = Configuration(target_directory, START_MARKER, END_MARKER)
     print(f'Writing to {config.get_target_directory()}, using {config.get_start_marker()} and {config.get_end_marker()} as markers.')
     chapters = section_file(file_path, config)
     print(f'Total chapters: {chapters}')

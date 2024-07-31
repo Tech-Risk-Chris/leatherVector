@@ -11,31 +11,42 @@
     There is a way for serial appending, though
     @see https://stackoverflow.com/questions/75468395/merge-small-parquet-files-into-a-single-large-parquet-file
 """
-
+import os
+import sys
 import pandas as pd
 import gzip
 
-# Path to your compressed CSV file
-csv_gz_path = 'text/novel/spy1821/index/mentions.csv.gz'
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        book_id = sys.argv[1]
+        if len(sys.argv) > 2:
+            source_directory = sys.argv[2]
+        else:
+            source_directory = 'text/novel/spy1821'
+    else:
+        book_id = 'pg9845'
 
-# Read the compressed CSV file
-with gzip.open(csv_gz_path, 'rt', encoding='utf-8') as f:
-    df = pd.read_csv(f)
+    # Path to your compressed CSV file
+    csv_gz_path = f'{source_directory}/index/mentions.csv.gz'
 
-print(f'Loaded {len(df)} rows from {csv_gz_path}')
+    # Read the compressed CSV file
+    with gzip.open(csv_gz_path, 'rt', encoding='utf-8') as f:
+        df = pd.read_csv(f)
 
-# insert the file designation and reorder
-print(f'Inserting column for works')
-old_columns = df.columns.tolist()
-df['Work'] = 'pg9845'
-df = df[ ['Work'] + old_columns ]
+    print(f'Loaded {len(df)} rows from {csv_gz_path}')
 
-# Sort the DataFrame by the desired columns
-print(f'Sorting columns ... ')
-sorted_df = df.sort_values(by=['Word','Chapter','Sentence'])
-print(f' ... done')
+    # insert the file designation and reorder
+    print(f'Inserting column for work ID with ID {book_id}')
+    old_columns = df.columns.tolist()
+    df['Work'] = book_id
+    df = df[ ['Work'] + old_columns ]
 
-"""
+    # Sort the DataFrame by the desired columns
+    print(f'Sorting columns ... ')
+    sorted_df = df.sort_values(by=['Word','Chapter','Sentence'])
+    print(f' ... done')
+
+    """
   Which deflater to use?
   
   The raw CSV index is the baseline, but that is unfair, since
@@ -56,10 +67,11 @@ print(f' ... done')
 
   Unsurprisingly, given these numbers, we use brotli as our default deflater.
 """
-deflater = 'brotli'
 
-# Convert the sorted DataFrame to a Parquet file
-parquet_path = 'text/novel/spy1821/index/mentions.parquet'
-print(f'Writing columns to {parquet_path} using {deflater} compression')
-sorted_df.to_parquet(parquet_path, compression=deflater)
-print('Done, done, and done.')
+    deflater = 'brotli'
+
+    # Convert the sorted DataFrame to a Parquet file
+    parquet_path = f'{source_directory}/index/mentions.parquet'
+    print(f'Writing columns to {parquet_path} using {deflater} compression')
+    sorted_df.to_parquet(parquet_path, compression=deflater)
+    print('Done, done, and done.')
