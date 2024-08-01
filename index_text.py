@@ -71,9 +71,10 @@ def analyze_tokens(tokens, s_start_generator, downcase=True):
             while offset > s_next_offset:
                 s_id = s_next_id
                 s_next_id, s_next_offset = next(s_start_generator)
-            if downcase:
-                lemma = lemma.lower()
-            lemma_store[pos_tag][lemma][s_id] += 1
+            if lemma not in ('"', "'s"):
+                if downcase:
+                    lemma = lemma.lower()
+                lemma_store[pos_tag][lemma][s_id] += 1
     return lemma_store, s_next_id
 
 
@@ -85,6 +86,7 @@ if __name__ == "__main__":
 
     raw_syntax_path = f'{file_path}/syntax-raw'
     index_path = f'{file_path}/index'
+    os.makedirs(index_path, exist_ok=True)
 
     index_file = f'{index_path}/mentions.csv.gz'
 
