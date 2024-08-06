@@ -73,5 +73,7 @@ if __name__ == "__main__":
     # Convert the sorted DataFrame to a Parquet file
     parquet_path = f'{source_directory}/index/mentions.parquet'
     print(f'Writing columns to {parquet_path} using {deflater} compression')
-    sorted_df.to_parquet(parquet_path, compression=deflater)
+    # required by Amazon Redshift, possibly by Athena too, to suppress the
+    # __index_level_0__ column; cf. https://pandas.pydata.org/docs/user_guide/io.html#handling-indexes
+    sorted_df.to_parquet(parquet_path, compression=deflater, index=False)
     print('Done, done, and done.')
