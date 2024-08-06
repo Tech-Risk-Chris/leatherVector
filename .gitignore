@@ -1,5 +1,6 @@
 # this is our download area for processing, replicates other stuff
 rawData
+rawUpload
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
