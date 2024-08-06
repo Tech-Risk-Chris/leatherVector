@@ -16,15 +16,18 @@ import sys
 import pandas as pd
 import gzip
 
+KEY_COLUMN = 'Word'
+REST_COLUMNS = ['Chapter','Sentence']
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        book_id = sys.argv[1]
-        if len(sys.argv) > 2:
-            source_directory = sys.argv[2]
-        else:
-            source_directory = 'text/novel/spy1821'
+        source_directory = sys.argv[1]
     else:
-        book_id = 'pg9845'
+        source_directory = 'text/novel/spy1821'
+    id_file = f'{source_directory}/id'
+    with open(id_file, 'r') as file:
+        book_id = file.readline().strip()
+    print(f'Book ID: {book_id}')
 
     # Path to your compressed CSV file
     csv_gz_path = f'{source_directory}/index/mentions.csv.gz'
@@ -37,14 +40,8 @@ if __name__ == "__main__":
 
     # insert the file designation and reorder
     print(f'Inserting column for work ID with ID {book_id}')
-    old_columns = df.columns.tolist()
     df['Work'] = book_id
-    df = df[ ['Work'] + old_columns ]
-
-    # Sort the DataFrame by the desired columns
-    print(f'Sorting columns ... ')
-    sorted_df = df.sort_values(by=['Word','Chapter','Sentence'])
-    print(f' ... done')
+    df = df[ [KEY_COLUMN] + ['Work'] + REST_COLUMNS ]
 
     """
   Which deflater to use?
@@ -75,5 +72,5 @@ if __name__ == "__main__":
     print(f'Writing columns to {parquet_path} using {deflater} compression')
     # required by Amazon Redshift, possibly by Athena too, to suppress the
     # __index_level_0__ column; cf. https://pandas.pydata.org/docs/user_guide/io.html#handling-indexes
-    sorted_df.to_parquet(parquet_path, compression=deflater, index=False)
+    df.to_parquet(parquet_path, compression=deflater, index=False)
     print('Done, done, and done.')
