@@ -45,6 +45,16 @@ The indexing works of the lemmata of the syntax and produces a `gzip`-compressed
   python3 index_text.py text/novel/spy1821
 ```
 
+
+## Index Catenation
+
+This step combines the sorted `gzip` compressed CSV files, prefixing each
+with its `id` file, into one continuous master index.
+
+```bash
+  python3 combine_indices.py text/novel/* 
+```
+
 ## Index Packing
 
 This step converts and index into a Parquet file, so it can be used for
